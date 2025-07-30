@@ -15,7 +15,7 @@ export async function generateStaticParams() {
 
 export default function RootLayout({ children, params }) {
   return (
-    <html lang={params.lng} dir={dir(params.lng)}>
+    <html lang={params.lng} dir="ltr">
       <body>{children}</body>
     </html>
   );
