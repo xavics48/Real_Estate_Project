@@ -1,35 +1,56 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import FiltersPanel from "@/components/FiltersPanel";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useRouter } from "next/navigation";
 
-export default function OffPlanPage() {
+export default function OffPlanPage({ limit }) {
+    const router = useRouter();
     const [filters, setFilters] = useState({});
     const [projects, setProjects] = useState([]);
     const [currency, setCurrency] = useState("AED");
     const [filtersOpen, setFiltersOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const fetchProjects = async () => {
         const params = new URLSearchParams({ ...filters, currency });
         const res = await fetch(`/api/off-plan?${params.toString()}`);
         const data = await res.json();
-        setProjects(data.results || []);
+        const limitedProjects = limit ? data.results?.slice(0, limit) : data.results;
+        setProjects(limitedProjects || []);
     };
 
-    useEffect(() => { fetchProjects(); }, [filters, currency]);
+    useEffect(() => {
+        fetchProjects();
+    }, [filters, currency]);
+
+    const handleViewMore = () => {
+        setLoading(true);
+        setTimeout(() => {
+            router.push('/off-plan');
+        }, 700); // delay to show loading animation
+    };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">
-                    New Off-Plan Properties for Sale in Dubai
-                </h1>
-                <div className="flex gap-2 mt-4 md:mt-0">
-                    {["AED", "EUR"].map((cur) => (
+        <div className="p-6 max-w-7xl mx-auto" dir="ltr">
+            {/* Title & Currencies */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">
+                        New Off-Plan Properties for Sale in Dubai
+                    </h1>
+                    <p className="text-sm text-gray-600 max-w-xl mt-1">
+                        Off-plan properties are developments which are still in planning or construction.
+                        Buying in the UAE provides early-phase pricing and flexible payment plans.
+                    </p>
+                </div>
+
+                {/* Currency Buttons */}
+                <div className="flex gap-2">
+                    {["AED", "EUR", "USD"].map((cur) => (
                         <Button
                             key={cur}
                             variant={currency === cur ? "default" : "outline"}
@@ -39,6 +60,32 @@ export default function OffPlanPage() {
                             {cur}
                         </Button>
                     ))}
+                </div>
+            </div>
+
+            {/* View More (Only on Limited version) */}
+            {limit && (
+                <div className="mb-6">
+                    <Button
+                        className="bg-sky-600 hover:bg-sky-700 text-white"
+                        onClick={handleViewMore}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <div className="flex items-center gap-2">
+                                <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Loading...
+                            </div>
+                        ) : (
+                            "View More"
+                        )}
+                    </Button>
+                </div>
+            )}
+
+            {/* Filters (only on full version) */}
+            {!limit && (
+                <div className="flex gap-2 mb-6">
                     <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
                         <SheetTrigger asChild>
                             <Button variant="outline" className="px-4">Filters</Button>
@@ -53,9 +100,9 @@ export default function OffPlanPage() {
                         </SheetContent>
                     </Sheet>
                 </div>
-            </div>
+            )}
 
-            {/* Properties grid */}
+            {/* Properties Grid */}
             <div>
                 {projects.length === 0 ? (
                     <p className="text-gray-500">No properties found.</p>
