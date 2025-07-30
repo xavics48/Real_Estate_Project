@@ -34,3 +34,28 @@ export async function searchProperties({ page = 0, langs = "en", ...filters } = 
         return null;
     }
 }
+
+export async function getPropertyById(id, langs = "en") {
+    const url = `${BASE_URL}/property/${id}?langs=${langs}`;
+
+    try {
+        const res = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-RapidAPI-Key": API_KEY,
+                "X-RapidAPI-Host": "bayut-api1.p.rapidapi.com",
+            },
+            cache: "no-store",
+        });
+
+        if (!res.ok) {
+            console.error(`❌ Bayut Property API error: ${res.status} - ${res.statusText}`);
+            return null;
+        }
+
+        return await res.json();
+    } catch (err) {
+        console.error("❌ Bayut API fetch error:", err);
+        return null;
+    }
+}

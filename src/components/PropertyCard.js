@@ -1,6 +1,6 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import Link from "next/link";
 export default function PropertyCard({ property, currency }) {
     const coverPhoto = property.media?.cover_photo || "/placeholder.jpg";
 
@@ -23,10 +23,12 @@ export default function PropertyCard({ property, currency }) {
         : property.price;
 
     return (
+        
         <div
             className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition transform hover:-translate-y-1"
             dir="ltr"
         >
+            <Link href={`/ui/project_details/${property.id}`}>
             {/* Image */}
             <div className="relative">
                 <img
@@ -79,7 +81,8 @@ export default function PropertyCard({ property, currency }) {
                 <Button className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                     Discover more
                 </Button>
-            </div>
+                </div>
+            </Link>
         </div>
     );
 }

@@ -1,15 +1,24 @@
 'use client';
 import Image from 'next/image';
 
-const ProjectDetailsHighlights = () => {
+const ProjectDetailsHighlights = ({ property }) => { // <-- Accept property
+    const brochureImage = property?.media?.photos?.[1] || "/project_detail_images/building.jpg"; // another project image
+    const location = property?.location?.community?.name || "Dubai"; // API location
+    const propertyTypes = property?.type?.sub || "Apartments"; // property type
+    const description = property?.description || "No description available."; // description
+    const size = property?.area?.built_up ? `${property.area.built_up} ${property.area.unit}` : "Size TBA"; // size
+    const completionDate = property?.details?.completion_details?.completion_date
+        ? new Date(property.details.completion_details.completion_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+        : "TBA"; // completion date
+    const price = property?.price ? `AED ${property.price.toLocaleString()}` : "Price on request"; // price
     return (
         <section className="relative grid grid-cols-1 md:grid-cols-2 gap-8 px-4 md:px-12 py-12 bg-white" dir="ltr">
 
             {/* Right Column: Brochure Image */}
             <div className="flex justify-center items-center">
                 <Image
-                    src="/project_detail_images/building.jpg"
-                    alt="Project Brochure"
+                    src={brochureImage} // <-- API image
+                    alt={property?.title || "Project Brochure"}
                     width={600}
                     height={450}
                     className="w-full h-auto object-contain"
@@ -20,45 +29,38 @@ const ProjectDetailsHighlights = () => {
             <div className="space-y-6 text-gray-800 text-sm leading-relaxed">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Location</h2>
-                    <p>
-                        Eden at Sobha Central is a landmark residential tower located directly on Sheikh Zayed Road, one of Dubai’s most prestigious and well-connected corridors. Positioned just steps from Jebel Ali Metro Station, the development offers fast access to key destinations such as Dubai Marina, Bluewaters Island, and Downtown Dubai. Residents benefit from a private exit lane to SZR and convenient connectivity to both DXB and DWC airports in under 30 minutes.
-                    </p>
+                    <p>{location}</p> {/* <-- API location */}
                 </div>
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Property Types</h2>
-                    <p>1 & 2-bedroom apartments</p>
+                    <p>{propertyTypes}</p> {/* <-- API type */}
                 </div>
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Features</h2>
-                    <p>
-                        Smart layouts, contemporary finishes, private balconies, panoramic views of the sea, Dubai Marina, and Bluewaters; a lifestyle podium with retail, wellness, and business zones; co-working spaces, rooftop lounges, sports zones, and wellness amenities.
-                    </p>
+                    <p>{description}</p> {/* <-- API description */}
                 </div>
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Investment Potential:</h2>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>Prime location along Sheikh Zayed Road, readily available for freehold residential purchase</li>
-                        <li>High-end integrated development with retail, commercial, and residential synergy</li>
-                        <li>Strong capital appreciation potential driven by flagship status and location</li>
-                        <li>Attractive rental returns due to proximity to metro and business hubs</li>
-                        <li>Flexible post-handover payment plan (60/40)</li>
+                        <li>Located in {location}</li>
+                        <li>Completion by {completionDate}</li>
+                        <li>Starting price {price}</li>
                     </ul>
                 </div>
 
                 <div>
-                    <p><span className="font-semibold">Average size:</span> 1BR from 631.41 sq.ft; 2BR from 966.59 sq.ft</p>
-                    <p><span className="font-semibold">Starting price:</span> AED 1,745,848 (USD 475,000) for 1-bedroom units <br />
-                        From AED 2,673,648 (USD 728,000) for 2-bedroom units</p>
-                    <p><span className="font-semibold">Completion Due Date:</span> Estimated 2028</p>
+                    <p><span className="font-semibold">Average size:</span> {size}</p>
+                    <p><span className="font-semibold">Starting price:</span> {price}</p>
+                    <p><span className="font-semibold">Completion Due Date:</span> {completionDate}</p>
                 </div>
 
                 {/* Brochure Button */}
                 <div>
                     <a
-                        href="#"
+                        href={property?.meta?.url || "#"} // <-- API property link
                         className="inline-block mt-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-md transition-all"
                     >
                         Download Free PDF Brochure
