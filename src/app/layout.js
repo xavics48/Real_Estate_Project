@@ -1,6 +1,7 @@
 // app/layout.js
 import { dir } from 'i18next';
-import { languages } from '../i18n/settings';
+// import { languages } from '../i18n/settings';
+import { languages } from '../../i18n/settings';
 import './globals.css';
 
 export const metadata = {
