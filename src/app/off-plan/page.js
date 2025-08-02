@@ -5,11 +5,19 @@ import FiltersPanel from "@/components/FiltersPanel";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; 
 
 export default function OffPlanPage({ limit }) {
     const router = useRouter();
-    const [filters, setFilters] = useState({});
+    const searchParams = useSearchParams();
+
+    // **Step 1: Initialize filters from query params**
+    const initialFilters = {};
+    for (const [key, value] of searchParams.entries()) {
+        initialFilters[key] = value;
+    }
+
+    const [filters, setFilters] = useState(initialFilters);
     const [projects, setProjects] = useState([]);
     const [currency, setCurrency] = useState("AED");
     const [filtersOpen, setFiltersOpen] = useState(false);
@@ -25,13 +33,24 @@ export default function OffPlanPage({ limit }) {
 
     useEffect(() => {
         fetchProjects();
-    }, [filters, currency]);
+    }, [filters]);
+
+
+    // **Step 4: Sync filters when the URL changes (e.g., user navigates via card click)**
+    useEffect(() => {
+        const updatedFilters = {};
+        for (const [key, value] of searchParams.entries()) {
+            updatedFilters[key] = value;
+        }
+        setFilters(updatedFilters);
+    }, [searchParams]); // <-- Runs whenever URL params change
+
 
     const handleViewMore = () => {
         setLoading(true);
         setTimeout(() => {
             router.push('/off-plan');
-        }, 700); // delay to show loading animation
+        }, 300); // delay to show loading animation
     };
 
     return (

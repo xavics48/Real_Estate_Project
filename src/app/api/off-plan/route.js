@@ -31,10 +31,7 @@ export async function GET(request) {
     console.log("🔍 Filters sent to Bayut:", filters);
 
     // **Step 1: Only fetch purpose=for-sale** (No other restrictive filters)
-    const data = await searchProperties({
-        purpose: "for-sale",
-        ...filters,
-    });
+    const data = await searchProperties(filters);
 
     console.log("✅ Bayut API returned:", data?.results?.length || 0, "results");
 

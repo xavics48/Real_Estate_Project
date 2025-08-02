@@ -1,42 +1,53 @@
 'use client';
 import Image from 'next/image';
 import { FaArrowRight, FaBuilding, FaHandsHelping, FaStar } from 'react-icons/fa';
-
+import { useRouter } from "next/navigation";
 const propertyTypes = [
     {
         title: 'Apartments for Sale',
         label: 'FROM AED 240,000',
         image: '/dashboard/apartments.jpg',
+        filters: { category: "apartments" },
     },
     {
         title: 'Townhouses for Sale',
         label: 'FROM AED 558,000',
         image: '/dashboard/townhouses.jpg',
+        filters: { category: "townhouses" },
     },
     {
-
         title: 'Villas for Sale',
         label: 'FROM AED 1,000,000',
         image: '/dashboard/villas.jpg',
+        filters: { category: "villas" },
     },
     {
         title: 'Buildings for Sale',
         label: 'FROM AED 47,000,000',
         image: '/dashboard/building.jpg',
+        filters: { category: "residential-building" },
     },
     {
         title: 'Land Plots for Sale',
         label: 'ONLINE PRE-APPROVAL',
         image: '/dashboard/property1.jpg',
+        filters: { category: "residential-plots" },
     },
     {
         title: 'All Properties for Sale',
         label: 'FROM AED 240,000',
         image: '/dashboard/building.jpg',
+        filters: {}, // No extra filter = all
     },
 ];
 
 const OffPlanPropertyTypesSection = () => {
+    const router = useRouter();
+
+    const handleCardClick = (filters) => {
+        const params = new URLSearchParams(filters).toString();
+        router.push(`/off-plan${params ? `?${params}` : ''}`);
+    };
     return (
         <section className="px-4 py-16 md:px-16 bg-white" dir="ltr">
             {/* Heading Section */}
@@ -85,6 +96,7 @@ const OffPlanPropertyTypesSection = () => {
                 {propertyTypes.map((item, index) => (
                     <div
                         key={index}
+                        onClick={() => handleCardClick(item.filters)}
                         className="relative rounded-lg overflow-hidden group shadow hover:shadow-lg transition"
                     >
                         <Image
